@@ -1,18 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import tkinter
+import tkinter as tk
+from tkinter import ttk
 
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 
 
 def main():
-    fd1 = get_data_by("Country", "Colombia", ["Country", "Year", "Life expectancy"])
-    fd2 = get_data_by("Country", "China", ["Country", "Year", "Life expectancy"])
-    interface_activate(fd1, fd2)
-    #comparative_graph(fd1, fd2, "Year", "Life expectancy")
-    #lin_regr(fd1, "Year", "Life expectancy")
+    interface_activate()
     
 
 def get_data_by(key_column, value_column, list_columns):
@@ -33,10 +30,10 @@ def lin_regr(x, key_column1, key_column2):
     return regression_graph(x, xp, predict, key_column1, key_column2)
     
 
-def comparative_graph(fd1, fd2, key_column1, key_column2):
+def comparative_graph(fd1, fd2, key_column1, key_column2, label1, label2):
     plt.figure()
-    plt.plot(fd1[key_column1][::-1],fd1[key_column2][::-1], label="Colombia")
-    plt.plot(fd2[key_column1][::-1],fd2[key_column2][::-1], label="China")
+    plt.plot(fd1[key_column1][::-1],fd1[key_column2][::-1], label=label1)
+    plt.plot(fd2[key_column1][::-1],fd2[key_column2][::-1], label=label2)
     plt.xlabel(key_column1)
     plt.ylabel(key_column2)
     plt.grid(ls="dashed")
@@ -46,7 +43,7 @@ def comparative_graph(fd1, fd2, key_column1, key_column2):
 
 def regression_graph(x, xp, predict, key_column1, key_column2):
     plt.figure()
-    plt.plot(x[key_column1][::-1],x[key_column2][::-1], "o", label="LS de Colombia")
+    plt.plot(x[key_column1][::-1],x[key_column2][::-1], "o")
     plt.plot(xp, predict, label="Reg lineal")
     plt.xlabel(key_column1)
     plt.ylabel(key_column2)
@@ -83,41 +80,26 @@ def poly_adjust(fd1, key_column1, key_column2):
 """
 
 
-def interface_activate(fd1, fd2):
-    w = tkinter.Tk()
-    w.geometry("500x500")
-    
-    """
-    e = tkinter.Label(w, text="Hello World!", bg="blue")
-    e.pack() # side=tkinter.RIGHT, fill=tkinter.X, fill=tkinter.Y, expand=true, fill=tkinter.BOTH
-    
-    b1 = tkinter.Button(w, text="Comparison chart", padx=40, pady=50, command=lambda:comparative_graph(fd1, fd2, "Year", "Life expectancy"))
-    b1.pack()
-    
-    b2 = tkinter.Button(w, text="Relate variables", padx=40, pady=50, command=lambda:lin_regr(fd1, "Year", "Life expectancy"))
-    b2.pack()
+def interface_activate():
+    w = tk.Tk()
+    w.title('Country Analysis')
+    w.geometry("395x355")
 
-    t = tkinter.Entry(w, font="Helvetica 25")
-    t.pack()
+    data_columns = ["Country","Year","Status","Life expectancy",
+    "Adult Mortality","infant deaths","Alcohol","percentage expenditure",
+    "Hepatitis B","Measles","BMI","under-five deaths","Polio",
+    "Total expenditure","Diphtheria","HIV/AIDS","GDP","Population",
+    "thinness 1-19 years","thinness 5-9 years",
+    "Income composition of resources","Schooling"]
 
-    def show_text():
-        t_d = t.get()
-        print(t_d)
-        e["text"] = t_d    
-    
-    b3 = tkinter.Button(w, text="Show text", padx=40, pady=50, command=show_text)
-    b3.pack()
-    """
-    # Con GRID
-    # Organizar los tamanos
-    e = tkinter.Label(w, text="COUNTRY ANALYSIS") # bg="blue"
-    t1 = tkinter.Entry(w, font="Helvetica 25")
-    t2 = tkinter.Entry(w, font="Helvetica 25")
-    t3 = tkinter.Entry(w, font="Helvetica 25")
-    t4 = tkinter.Entry(w, font="Helvetica 25")
-    b1 = tkinter.Button(w, text="Comparison chart", padx=40, pady=50, command=lambda:comparative_graph(fd1, fd2, "Year", "Life expectancy"))
-    b2 = tkinter.Button(w, text="Relate variables", padx=40, pady=50, command=lambda:lin_regr(fd1, "Year", "Life expectancy"))
-   
+    e = tk.Label(w, text="COUNTRY ANALYSIS")
+    t1 = tk.Entry(w, font="Helvetica 25", width=10)
+    t2 = tk.Entry(w, font="Helvetica 25", width=10)
+    t3 = ttk.Combobox(w, values=(data_columns), width=20)
+    t4 = ttk.Combobox(w, values=(data_columns), width=20)
+    b1 = tk.Button(w, text="Comparison chart", padx=38, pady=50, command=lambda:comparative_graph(get_data_by("Country", t1.get(), ["Country", t3.get(), t4.get()]), get_data_by("Country", t2.get(), ["Country", t3.get(), t4.get()]), t3.get(), t4.get(), t1.get(), t2.get()), width=16)
+    b2 = tk.Button(w, text="Relate variables", padx=38, pady=50, command=lambda:lin_regr(get_data_by("Country", t1.get(), ["Country", t3.get(), t4.get()]), t3.get(), t4.get()), width=16)
+
     e.grid(row=0, column=0)
     t1.grid(row=1, column=0)
     t2.grid(row=2, column=0)
@@ -126,17 +108,8 @@ def interface_activate(fd1, fd2):
     b1.grid(row=3, column=0)
     b2.grid(row=4, column=0)
 
-    # ----------------------------
-    # Ejemplo GRID
-
-    #boton1 = tkinter.Button(w, text="Butututuno 1", width=10, height=5)
-    #boton2 = tkinter.Button(w, text="Butututuno 2", width=10, height=5)
-    #boton3 = tkinter.Button(w, text="Butututuno 3", width=10, height=5)
-
-    #boton1.grid(row=0, column=0)
-    #boton2.grid(row=1, column=0)
-    #boton3.grid(row=2, column=0)
-
+    t3.current(1)
+    t4.current(3)
     w.mainloop()
 
 
